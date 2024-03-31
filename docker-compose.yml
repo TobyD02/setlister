@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./services/frontend
+      args:
+        - NODE_ENV=development
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+    env_file:
+      - ./.env.dev
+    tty: true
+    ports:
+      - '19006:19006'
+      - '19001:19001'
+      - '19002:19002'
+    volumes:
+      - ./services/frontend:/opt/frontend/:delegated
+      - ./services/frontend/package.json:/opt/frontend/package.json
+      - ./services/frontend/package-lock.json:/opt/frontend/package-lock.json
+    healthcheck:
+      disable: true
+
+  backend:
+    build: ./services/backend
+    command: python manage.py run -h 0.0.0.0
+    volumes:
+      - ./services/backend/:/usr/src/backend/
+    ports:
+      - 5001:5000
+    env_file:
+      - ./.env.dev
+    environment:
+    - CHOKIDAR_USEPOLLING=true
+    
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:  
+      - POSTGRES_USER=hello_flask
+      - POSTGRES_PASSWORD=hello_flask
+      - POSTGRES_DB=hello_flask_dev
+
+volumes:
+  postgres_data:

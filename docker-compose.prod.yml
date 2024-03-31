@@ -1,0 +1,38 @@
+
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./services/backend
+      dockerfile: Dockerfile.prod
+    command: gunicorn --bind 0.0.0.0:5000 manage:app
+    volumes:
+      - static_volume:/home/app/backend/src/static
+      - media_volume:/home/app/backend/src/media
+    expose:
+      - 5000
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - db
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.prod.db
+  nginx:
+    build: ./services/nginx
+    volumes:
+      - static_volume:/home/app/backend/src/static
+      - media_volume:/home/app/backend/src/media
+    ports:
+      - 1337:80
+    depends_on: 
+      - backend
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
