@@ -32,15 +32,19 @@ A fully dockerised full-stack crossplatform application, using a postgres databa
             APP_FOLDER=/usr/src/backend
 
             # EXPO connection url (found by running expo app locally)
-            REACT_NATIVE_PACKAGER_HOSTNAME="XXX.XXX.X.XXX"
+            REACT_NATIVE_PACKAGER_HOSTNAME="XXX.XXX.X.XXX:"
 
             # Backend exposed API url
-            EXPO_PUBLIC_API_URL="http://localhost:5001/"
+            EXPO_PUBLIC_API_URL="http://XXX.XXX.X.XXX:5001/"
 
             # Allow CORS (used for dev)
             ALLOW_CORS = True
             ```
-        - REACT_NATIVE_PACKAGE_HOSTNAME can be found by running the front end locally using ```npm start```. In the logs, the correct IP address will be shown:
+        - REACT_NATIVE_PACKAGE_HOSTNAME and EXPO_PUBLIC_API_URL should be your local machines ipv4 address. One method for finding this is by running the front end locally using:
+            ```bash
+            npm install && npm start
+            ``` 
+            In the logs, the correct IP address will be shown:
             ```bash
             > Metro waiting on exp://XXX.XXX.X.XXX:PORT
             ```
@@ -74,7 +78,7 @@ A fully dockerised full-stack crossplatform application, using a postgres databa
 
 - **To access the frontend** - execute the command:
     ```bash
-    docker-compose logs
+    docker-compose logs frontend
     ```
 
     Accessing the frontend containers logs provide you with a link to the localhost url where the web app can be accessed,
