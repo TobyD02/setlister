@@ -1,54 +1,53 @@
-import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import axios from 'axios';
+import React from "react";
+import { Text, View, StyleSheet, Button } from "react-native";
+import { AuthProvider, useAuth } from "./app/context/AuthContext"; // Added import of useAuth
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Home from "./app/screens/Home";
+import Login from "./app/screens/Login";
+import Register from "./app/screens/Register";
 
-export default function App() {
-  const [data, setData] = useState(null);
+const Stack = createNativeStackNavigator();
 
-  useEffect(() => {
-    // Define the function to make the Axios GET request
-    const fetchData = async () => {
-      try {
-        // Make the GET request to the API URL
-        const response = await axios.get(process.env.EXPO_PUBLIC_API_URL);
-        // Extract the data from the response
-        const apiData = response.data;
-        // Update the state with the fetched data
-        setData(apiData);
-      } catch (error) {
-        // Handle any errors that occur during the request
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    // Call the fetchData function when the component mounts
-    fetchData();
-
-    // Cleanup function (optional)
-    return () => {
-      // Perform any cleanup actions if necessary
-    };
-  }, []); // Empty dependency array ensures that the effect runs only once after the initial render
+export default function App() { // Changed to use function declaration
 
   return (
-    <View style={styles.container}>
-      {/* Render the fetched data */}
-      {data ? (
-        <Text>Data from API: {JSON.stringify(data)}</Text>
-      ) : (
-        <Text>Loading... {process.env.EXPO_PUBLIC_API_URL}</Text>
-      )}
-      <StatusBar style="auto" />
-    </View>
+    <AuthProvider>
+      <Layout />
+    </AuthProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
+
+export const Layout = () => {
+  const { authState, onLogout } = useAuth();
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        {authState.authenticated ? (
+          <Stack.Screen
+            name='Home'
+            component={Home}
+            options={{
+              headerRight: () => (
+                <Button onPress={onLogout} title="Logout" />
+              ),
+            }}
+          />
+        ) : (
+          <Stack.Screen name='Login' component={Login} />
+        )}
+        <Stack.Screen name='Register' component={Register} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
