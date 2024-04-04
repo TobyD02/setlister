@@ -8,27 +8,35 @@ const Login = () => {
   const navigation = useNavigation()
 
   const { onLogin } = useAuth();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const login = async () => {
-    const result = await onLogin(email, password);
+    const result = await onLogin(username, password);
     if (result && result.error) {
-      alert(result.error);
+      alert(`status: ${result.status}, txt: ${result.txt}`);
     }
   };
   const register = async () => {
     navigation.navigate('Register')
   };
 
+  const validate = () => {
+    let errors = {}
+
+    if (!email) {
+      errors.email = "Email is required"
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.form}>
         <TextInput
           style={styles.input}
-          placeholder="Email"
-          onChangeText={(text) => setEmail(text)}
-          value={email}
+          placeholder="Username/Email"
+          onChangeText={(text) => setUsername(text)}
+          value={username}
           autoCapitalize="none"
           autoComplete="off"
         />

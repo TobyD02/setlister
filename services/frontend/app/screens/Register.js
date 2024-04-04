@@ -46,7 +46,7 @@ const Login = () => {
           onChangeText={(text) => setPassword(text)}
           value={password}
           autoCapitalize="none"
-          autoComplete="off"
+          autoComplete="off" 
         />
         <Button onPress={register} title="Create Account" />
       </View>

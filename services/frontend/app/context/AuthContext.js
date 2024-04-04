@@ -32,13 +32,13 @@ export const AuthProvider = ({ children }) => {
       const result = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/api/users`, {email: email, password: password, username: username})
     } catch (e) {
       alert(`keys: ${Object.keys(e)}, values: ${Object.values(e)}`)
-      return {error: e, txt: e.response.data.error}
+      return {error: e, txt: e.response.data.error, status: e.response.status}
     }
   }
 
-  const login = async (email, password) => {
+  const login = async (username, password) => {
     try {
-      const result = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth`, {email, password})
+      const result = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/api/auth`, {username, password})
       // alert('Auth result: ', result)
 
       setAuthState({token: result.data.token, authenticated: true})
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
       return result
 
     } catch (e) {
-      return {error: e, txt: e.response.data.error}
+      return {error: e, txt: e.response.data.error, status: e.response.status}
     }
   }
 

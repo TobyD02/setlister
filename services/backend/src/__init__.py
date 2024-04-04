@@ -62,18 +62,18 @@ def login():
     print(data)
 
     # Check if required fields are present
-    if not (data.get('email') and data.get('password')) and not (data.get('username') and data.get('password')):
+    if not (data.get('username') and data.get('password')):
         return jsonify({'error': 'Email/Username and password are required'}), 400
 
     user = None
 
     # Check if login using email
-    if data.get('email'):
-        user = User.query.filter_by(email=data['email']).first()
+    user = User.query.filter_by(email=data['username']).first()
+    print("User by email:", user)
 
-    # Check if login using username
-    if not user and data.get('username'):
+    if not user:
         user = User.query.filter_by(username=data['username']).first()
+        print("User by username:", user)
 
     if not user or not user.check_password(data['password']):
         return jsonify({'error': 'Invalid email/username or password'}), 401
@@ -82,6 +82,7 @@ def login():
     access_token = create_access_token(identity=user.id)
 
     return jsonify({'message': 'Login successful', 'token': access_token})
+
 
 
 @app.route("/api/users", methods=["POST"])
@@ -102,22 +103,28 @@ def create_user():
     if data.get('is_admin'):
         role = 'admin'
 
-    # Create a new user instance
-    new_user = User(
-        username=data['username'],
-        email=data['email'],
-        password=data['password'],
-        role=role
-    )
+    try:
+        # Create a new user instance
+        new_user = User(
+            username=data['username'],
+            email=data['email'],
+            password=data['password'],
+            role=role
+        )
 
-    # Add the new user to the database
-    db.session.add(new_user)
-    db.session.commit()
+         # Add the new user to the database
+        db.session.add(new_user)
+        db.session.commit()
 
-    # Generate access token
-    access_token = create_access_token(identity=new_user.id)
+        # Generate access token
+        access_token = create_access_token(identity=new_user.id)
 
-    return jsonify({'message': 'User created successfully', 'token': access_token}), 201
+        return jsonify({'message': 'User created successfully', 'token': access_token}), 201
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 
 
 # Static Files
