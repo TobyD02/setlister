@@ -4,9 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import Sequence
 import re
 
-import re
-from sqlalchemy.orm import column_property
-
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -20,10 +17,10 @@ class User(db.Model):
         db.TIMESTAMP, default=datetime.utcnow, nullable=False)
 
     def __init__(self, username, email, password, role=None):
-        
+
         if not self.check_email(email):  # Validate email
             raise ValueError('Invalid email address')
-        
+
         self.username = username
         self.email = email
         self.password = generate_password_hash(password)
@@ -35,9 +32,6 @@ class User(db.Model):
     def check_email(self, value):
         email_regex = r'^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$'
         return re.match(email_regex, value) is not None
-
-
-
 
 
 class Profile(db.Model):

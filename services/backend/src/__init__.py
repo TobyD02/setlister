@@ -63,7 +63,7 @@ def login():
 
     # Check if required fields are present
     if not (data.get('username') and data.get('password')):
-        return jsonify({'error': 'Email/Username and password are required'}), 400
+        return jsonify({'error': 'Email/Username and Password are required'}), 400
 
     user = None
 
@@ -98,6 +98,10 @@ def create_user():
     if User.query.filter_by(email=data['email']).first():
         print("Printing:",User.query.filter_by(email=data['email']).first())
         return jsonify({'error': 'Email address is already in use'}), 409
+    
+    if User.query.filter_by(username=data['username']).first():
+        print("Printing:",User.query.filter_by(username=data['username']).first())
+        return jsonify({'error': 'Username is already in use'}), 409
 
     role = 'user'
     if data.get('is_admin'):

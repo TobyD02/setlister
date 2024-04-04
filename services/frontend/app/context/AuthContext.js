@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadToken = async () => {
       const token = await SecureStore.getItemAsync(TOKEN_KEY) 
-      // alert(`token: ${token}`)
 
       if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
@@ -29,9 +28,9 @@ export const AuthProvider = ({ children }) => {
   const register = async (username, email, password) => {
     
     try {
-      const result = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/api/users`, {email: email, password: password, username: username})
+      const result = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/api/users`, {email: email, password: password, username: username}).then(() => {login(username, password)}) 
     } catch (e) {
-      alert(`keys: ${Object.keys(e)}, values: ${Object.values(e)}`)
+      // alert(`keys: ${Object.keys(e)}, values: ${Object.values(e)}`)
       return {error: e, txt: e.response.data.error, status: e.response.status}
     }
   }
